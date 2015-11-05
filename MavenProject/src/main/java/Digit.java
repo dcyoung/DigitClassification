@@ -2,14 +2,25 @@ import java.util.*;
 
 public class Digit {
 
+	//actual true integer value of the digit between 0 and 9
 	private int trueValue;
-	private int[][] pixelData; //will be a 28x28 array of 
+	//28x28 array of values for the pixels of this digit
+	private int[][] pixelData;  
 	
+	/**
+	 * Constructor
+	 * @param pixelData
+	 * @param trueValue
+	 */
 	public Digit(int[][] pixelData, int trueValue){
 		this.pixelData = deepCopy2dArray(pixelData); 
 		this.trueValue = trueValue;
 	}
 	
+	/**
+	 * Prints the digit value and pixel values
+	 * @param bUseSpaces
+	 */
 	public void printDigit(boolean bUseSpaces){
 		System.out.println("TrueValue: " + this.trueValue);
 		System.out.println("PixelValues: ");
@@ -23,7 +34,11 @@ public class Digit {
 		}
 	}
 	
-	
+	/**
+	 * Helper function to deep copy a 2d array
+	 * @param input
+	 * @return
+	 */
 	private int[][] deepCopy2dArray(int[][] input){
 		int [][] copy = new int[input.length][];
 		for(int i = 0; i < input.length; i++)
