@@ -48,7 +48,7 @@ public class HeatMapGenerator {
             generateHeatMap(likelihoods.get(r), "Heat chart for r=" + r, "r=" + r + "-heat-chart.png");
             generateHeatMap(likelihoods.get(c), "Heat chart for c=" + c, "c=" + c + "-heat-chart.png");
 
-            double[][] odds = getSpecifiedOdd(likelihoods.get(r), likelihoods.get(c);
+            double[][] odds = getSpecifiedOdds(likelihoods.get(r), likelihoods.get(c));
             generateHeatMap(odds, "Heat chart for odds of r=" + r + " vs c=" + c, r + "-" + c + "-odds-heat-chart.png");
         }
     }
@@ -62,4 +62,16 @@ public class HeatMapGenerator {
 
         map.saveToFile(new File(filename));
     }
+    
+	
+	public double[][] getSpecifiedOdds(double[][] likelihoods1, double[][] likelihoods2){
+		double[][] odds = new double[28][28];
+		for(int i = 0; i < 28; i++ ){
+			for(int j = 0; j < 28; j++ ){
+				odds[i][j] = likelihoods1[i][j]/likelihoods2[i][j];
+			}
+		}
+		return odds;
+	}
+    
 }
