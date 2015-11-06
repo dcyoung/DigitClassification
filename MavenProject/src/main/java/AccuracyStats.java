@@ -37,7 +37,7 @@ public class AccuracyStats {
     }
 
     // This is the diagonal of the confusionMatrix
-    public double[] getClassificationRate() {
+    public double[] getClassificationRates() {
         double[][] confusionMatrix = getConfusionMatrix();
 
         double[] ret = new double[10];
@@ -47,6 +47,17 @@ public class AccuracyStats {
 
         return ret;
     }
+    // average
+    public double getAverageClassificationRate() {
+        double[] classificationRates =  this.getClassificationRates();
+        double sum = 0;
+        for (int i = 0; i < classificationRates.length; i++) {
+        	sum += classificationRates[i];
+        }
+
+        return sum/classificationRates.length;
+    }
+    
 
     public void printConfusionMatrix() {
         DecimalFormat df = new DecimalFormat("0.00");

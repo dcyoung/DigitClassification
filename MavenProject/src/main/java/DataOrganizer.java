@@ -206,7 +206,8 @@ public class DataOrganizer {
 				stats.addDatapoint(digClass, postProbs.indexOf(Collections.max(postProbs)));
 			}
 		}
-
+		
+		System.out.println(stats.getClassificationRates());
 		stats.printConfusionMatrix();
 	}
 
