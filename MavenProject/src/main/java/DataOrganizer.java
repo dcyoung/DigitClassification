@@ -51,7 +51,7 @@ public class DataOrganizer {
 				for(int j = 0; j < 28; j++ ){
 					//for each test img
 					sum = 0;
-					for(Digit tempDig : this.getSeparatedDigits().get(d)){
+					for(Digit tempDig : this.getGroupedDigits().get(d)){
 						sum += tempDig.getPixelData()[i][j];
 					}
 					//P(Fij = f | class) = (# of times pixel (i,j) has value f in training examples from this class) / (Total # of training examples from this class).
@@ -64,7 +64,7 @@ public class DataOrganizer {
 					 * denominator (where V is the number of possible values the feature can take on). 
 					 * The higher the value of k, the stronger the smoothing 
 					 */
-					likelihood = (float) ((k+sum)/(k*V+this.getSeparatedDigits().get(d).size()));
+					likelihood = (float) ((k+sum)/(k*V+this.getGroupedDigits().get(d).size()));
 					likelihoods.get(d)[i][j] = likelihood;
 				}
 			}
@@ -94,17 +94,72 @@ public class DataOrganizer {
 		return allDigits;
 	}
 
-	public ArrayList<ArrayList<Digit>> getSeparatedDigits() {
+	public ArrayList<ArrayList<Digit>> getGroupedDigits() {
 		return groupedDigits;
 	}
 
 	public ArrayList<float[][]> getLikelihoods() {
 		return likelihoods;
 	}
-
+	
+	/**
+	 * estimate the priors P(class) by the empirical frequencies of different classes in the training set
+	 * @param digit: the class of digit (0-9)
+	 * @return P(class) estimated by the empirical freq of different classes in the training set
+	 */
+	public float getProbabilityOfDigitClass(int digit){
+		return (float) (1.0*this.groupedDigits.get(digit).size()/this.allDigits.size());
+	}
+	
+	/**
+	 * 
+	 * @param digClass
+	 * @param pixRow
+	 * @param pixCol
+	 * @param featureVal
+	 * @return P(f_i,j | class)
+	 */
+	public float getPixelLikelihood(int digClass, int pixRow, int pixCol, int featureVal){
+		float likelihoodPixelIsOne = this.getLikelihoods().get(digClass)[pixRow][pixCol];
+		if(featureVal == 1){
+			return likelihoodPixelIsOne;
+		}
+		else{
+			return 1-likelihoodPixelIsOne;
+		}
+	}
+	
+	/**
+	 * 
+	 * @param digit
+	 * @return an array of posterior probabilities (up to scale) of each class given the digit
+	 */
+	public ArrayList<Double> getPosteriorProbabilities(Digit digit){
+		ArrayList<Double> postProbs = new ArrayList<Double>();
+		int[][] testImg = digit.getPixelData();
+		double tempProb;
+		double PijGivenClass;
+		
+		//for each digClass 0->9
+		for(int digClass = 0; digClass < 10; digClass++){
+			tempProb = Math.log(getProbabilityOfDigitClass(digClass));
+			//for each pixel in the testimg
+			for(int i = 0; i < 28; i++ ){
+				for(int j = 0; j < 28; j++ ){
+					PijGivenClass = Math.log(getPixelLikelihood(digClass, i, j, testImg[i][j]));
+					tempProb = tempProb*PijGivenClass;
+				}
+			}
+			postProbs.add(tempProb);
+		}
+		
+		return postProbs;
+	}
+	
+	
+	
 	
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
 		
 		FileReader fr = new FileReader();
 		String imgDataFilename = "digitdata/trainingimages";
@@ -115,12 +170,14 @@ public class DataOrganizer {
 		DataOrganizer dOrg = new DataOrganizer(test);
 		
 		for(int i = 0; i < 10; i++){
-			System.out.println("number of " + i + "'s: " + dOrg.getSeparatedDigits().get(i).size());
-			dOrg.printArray(dOrg.getLikelihoods().get(i), true);
-//			System.out.println();
-			
+			System.out.println("number of " + i + "'s: " + dOrg.getGroupedDigits().get(i).size());
+			System.out.println("P(Class = " + i + ") is " + dOrg.getProbabilityOfDigitClass(i));
+			//dOrg.printArray(dOrg.getLikelihoods().get(i), true);
 		}
 		
+		Digit digit = dOrg.getGroupedDigits().get(5).get(0);
+		ArrayList<Double> postProbs = dOrg.getPosteriorProbabilities(digit);
+		System.out.println(postProbs);
 		
 	}
 
