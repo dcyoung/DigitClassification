@@ -1,3 +1,4 @@
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -40,6 +41,13 @@ public class TestRunner {
 			System.out.println("Digit " + i + ": " + df.format(classRates[i]));
 		}
 		System.out.println("Average Classification Rate Across all Digit Classes: \n" + df.format(stats.getAverageClassificationRate()));
+
+		try {
+			HeatMapGenerator hmg = new HeatMapGenerator(stats, trainingData.getLikelihoods());
+		} catch (IOException e) {
+			System.out.println("Failed to create/save heat maps");
+			e.printStackTrace();
+		}
 	}
 
 }
