@@ -11,7 +11,7 @@ public class DataOrganizer {
 	private ArrayList<ArrayList<Digit>> groupedDigits;
 	
 	//likelihoods that each pixel for each digit has a value of 1
-	private ArrayList<float[][]> likelihoods;
+	private ArrayList<double[][]> likelihoods;
 	
 	
 	public DataOrganizer(ArrayList<Digit> allDigits){
@@ -23,9 +23,9 @@ public class DataOrganizer {
 		}
 		groupDigits();
 		
-		this.likelihoods = new ArrayList<float[][]>();
+		this.likelihoods = new ArrayList<double[][]>();
 		for(int i = 0; i < 10; i++ ){
-			this.likelihoods.add(new float[28][28]);
+			this.likelihoods.add(new double[28][28]);
 		}
 		calculateLikelihoods();
 	}
@@ -102,7 +102,7 @@ public class DataOrganizer {
 		return groupedDigits;
 	}
 
-	public ArrayList<float[][]> getLikelihoods() {
+	public ArrayList<double[][]> getLikelihoods() {
 		return likelihoods;
 	}
 	
@@ -123,8 +123,8 @@ public class DataOrganizer {
 	 * @param featureVal
 	 * @return P(f_i,j | class)
 	 */
-	public float getPixelLikelihood(int digClass, int pixRow, int pixCol, int featureVal){
-		float likelihoodPixelIsOne = this.getLikelihoods().get(digClass)[pixRow][pixCol];
+	public double getPixelLikelihood(int digClass, int pixRow, int pixCol, int featureVal){
+		double likelihoodPixelIsOne = this.getLikelihoods().get(digClass)[pixRow][pixCol];
 		if(featureVal == 1){
 			return likelihoodPixelIsOne;
 		}
