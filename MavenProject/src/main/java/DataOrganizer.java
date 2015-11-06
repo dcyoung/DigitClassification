@@ -196,16 +196,18 @@ public class DataOrganizer {
 			System.out.println("P(Class = " + i + ") is " + dOrg.getProbabilityOfDigitClass(i));
 			//dOrg.printArray(dOrg.getLikelihoods().get(i), true);
 		}
-		
+
+		AccuracyStats stats = new AccuracyStats();
 		for(int digClass = 0; digClass < 10; digClass++){
 			ArrayList<Integer> bestGuesses = new ArrayList<Integer>();
 			for(int i = 0; i < dOrg.getGroupedDigits().get(digClass).size(); i++){
 				Digit digit = dOrg.getGroupedDigits().get(digClass).get(i);
 				ArrayList<Double> postProbs = dOrg.getPosteriorProbabilities(digit);
-				bestGuesses.add(postProbs.indexOf(Collections.max(postProbs)));
+				stats.addDatapoint(digClass, postProbs.indexOf(Collections.max(postProbs)));
 			}
-			System.out.println(dOrg.mode(bestGuesses));
 		}
+
+		stats.printConfusionMatrix();
 	}
 
 }

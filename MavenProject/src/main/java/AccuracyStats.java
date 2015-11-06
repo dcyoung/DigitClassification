@@ -1,3 +1,4 @@
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -16,7 +17,7 @@ public class AccuracyStats {
         this.confusionMatrixNonNormalized[actual][classifiedAs]++;
     }
 
-    public int[][] getConfusionMatrix() {
+    public double[][] getConfusionMatrix() {
         // Normalize confusion matrix
         int[] rowTotals = new int[10];
         for (int i = 0; i < rowTotals.length; i++) {
@@ -25,10 +26,10 @@ public class AccuracyStats {
             }
         }
 
-        int[][] confusionMatrix = new int[10][10]
+        double[][] confusionMatrix = new double[10][10];
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 10; j++) {
-                confusionMatrix[i][j] = confusionMatrixNonNormalized[i][j]/rowTotals[i];
+                confusionMatrix[i][j] = 1.0 * confusionMatrixNonNormalized[i][j]/rowTotals[i];
             }
         }
 
@@ -36,14 +37,34 @@ public class AccuracyStats {
     }
 
     // This is the diagonal of the confusionMatrix
-    public int[] getClassificationRate() {
-        int[][] confusionMatrix = getConfusionMatrix();
+    public double[] getClassificationRate() {
+        double[][] confusionMatrix = getConfusionMatrix();
 
-        int[] ret = new int[10];
+        double[] ret = new double[10];
         for (int i = 0; i < 10; i++) {
             ret[i] = confusionMatrix[i][i];
         }
 
         return ret;
+    }
+
+    public void printConfusionMatrix() {
+        DecimalFormat df = new DecimalFormat("0.00");
+        df.setMaximumFractionDigits(2);
+        double[][] confusionMatrix = getConfusionMatrix();
+
+        System.out.println();
+        for (int i = 0; i < 10; i++) {
+            for (int j = 0; j < 10; j++) {
+                System.out.print(df.format(confusionMatrix[i][j]));
+                System.out.print(", ");
+            }
+
+            System.out.println();
+        }
+    }
+
+    public void printClassificationRate() {
+
     }
 }
