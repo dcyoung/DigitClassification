@@ -1,5 +1,9 @@
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class DataOrganizer {
 	
@@ -147,7 +151,7 @@ public class DataOrganizer {
 			for(int i = 0; i < 28; i++ ){
 				for(int j = 0; j < 28; j++ ){
 					PijGivenClass = Math.log(getPixelLikelihood(digClass, i, j, testImg[i][j]));
-					tempProb = tempProb*PijGivenClass;
+					tempProb += PijGivenClass;
 				}
 			}
 			postProbs.add(tempProb);
@@ -156,7 +160,25 @@ public class DataOrganizer {
 		return postProbs;
 	}
 	
-	
+	 public <T> List<T> mode(List<? extends T> coll) {
+	        Map<T, Integer> seen = new HashMap<T, Integer>();
+	        int max = 0;
+	        List<T> maxElems = new ArrayList<T>();
+	        for (T value : coll) {
+	            if (seen.containsKey(value))
+	                seen.put(value, seen.get(value) + 1);
+	            else
+	                seen.put(value, 1);
+	            if (seen.get(value) > max) {
+	                max = seen.get(value);
+	                maxElems.clear();
+	                maxElems.add(value);
+	            } else if (seen.get(value) == max) {
+	                maxElems.add(value);
+	            }
+	        }
+	        return maxElems;
+	    }
 	
 	
 	public static void main(String[] args) {
@@ -175,10 +197,15 @@ public class DataOrganizer {
 			//dOrg.printArray(dOrg.getLikelihoods().get(i), true);
 		}
 		
-		Digit digit = dOrg.getGroupedDigits().get(5).get(0);
-		ArrayList<Double> postProbs = dOrg.getPosteriorProbabilities(digit);
-		System.out.println(postProbs);
-		
+		for(int digClass = 0; digClass < 10; digClass++){
+			ArrayList<Integer> bestGuesses = new ArrayList<Integer>();
+			for(int i = 0; i < dOrg.getGroupedDigits().get(digClass).size(); i++){
+				Digit digit = dOrg.getGroupedDigits().get(digClass).get(i);
+				ArrayList<Double> postProbs = dOrg.getPosteriorProbabilities(digit);
+				bestGuesses.add(postProbs.indexOf(Collections.max(postProbs)));
+			}
+			System.out.println(dOrg.mode(bestGuesses));
+		}
 	}
 
 }
