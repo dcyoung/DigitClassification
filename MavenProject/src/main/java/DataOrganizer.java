@@ -44,7 +44,7 @@ public class DataOrganizer {
 		int sum;
 		float likelihood;
 		
-		float k  = 25; //constant
+		float k  = 1; //constant
 		int V = 2; //number of possible values a feature can take (here binary 0,1  so 2 values)
 		
 		//for digit 0->9
