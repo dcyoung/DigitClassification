@@ -10,7 +10,7 @@ public class AccuracyStats {
     private int[][] confusionMatrixNonNormalized;
 
     public AccuracyStats() {
-        this.confusionMatrixNonNormalized = new int[10][10];
+        this.confusionMatrixNonNormalized = new int[2][2];
     }
 
     public void addDatapoint(int actual, int classifiedAs) {
@@ -19,16 +19,16 @@ public class AccuracyStats {
 
     public double[][] getConfusionMatrix() {
         // Normalize confusion matrix
-        int[] rowTotals = new int[10];
+        int[] rowTotals = new int[2];
         for (int i = 0; i < rowTotals.length; i++) {
-            for (int j = 0; j < 10; j++) {
+            for (int j = 0; j < 2; j++) {
                 rowTotals[i]+=confusionMatrixNonNormalized[i][j];
             }
         }
 
-        double[][] confusionMatrix = new double[10][10];
-        for (int i = 0; i < 10; i++) {
-            for (int j = 0; j < 10; j++) {
+        double[][] confusionMatrix = new double[2][2];
+        for (int i = 0; i < 2; i++) {
+            for (int j = 0; j < 2; j++) {
                 confusionMatrix[i][j] = 1.0 * confusionMatrixNonNormalized[i][j]/rowTotals[i];
             }
         }
@@ -40,11 +40,10 @@ public class AccuracyStats {
     public double[] getClassificationRates() {
         double[][] confusionMatrix = getConfusionMatrix();
 
-        double[] ret = new double[10];
-        for (int i = 0; i < 10; i++) {
+        double[] ret = new double[2];
+        for (int i = 0; i < 2; i++) {
             ret[i] = confusionMatrix[i][i];
         }
-
         return ret;
     }
     // average
@@ -65,8 +64,8 @@ public class AccuracyStats {
         double[][] confusionMatrix = getConfusionMatrix();
 
         System.out.println();
-        for (int i = 0; i < 10; i++) {
-            for (int j = 0; j < 10; j++) {
+        for (int i = 0; i < 2; i++) {
+            for (int j = 0; j < 2; j++) {
                 System.out.print(df.format(confusionMatrix[i][j]));
                 System.out.print(", ");
             }
@@ -74,8 +73,5 @@ public class AccuracyStats {
             System.out.println();
         }
     }
-
-    public void printClassificationRate() {
-
-    }
+    
 }

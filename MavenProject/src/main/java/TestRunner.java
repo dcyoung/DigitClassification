@@ -13,19 +13,19 @@ public class TestRunner {
 		FileReader fr = new FileReader();
 		String imgDataFilename = "digitdata/trainingimages";
 		String labelFilename = "digitdata/traininglabels";
-		ArrayList<Digit> trainingDataDigits = fr.readDigitData(imgDataFilename, labelFilename);
+		ArrayList<Face> trainingDataDigits = fr.readFaceData(imgDataFilename, labelFilename);
 		
 		imgDataFilename = "digitdata/testimages";
 		labelFilename = "digitdata/testlabels";
-		ArrayList<Digit> testDataDigits = fr.readDigitData(imgDataFilename, labelFilename);
+		ArrayList<Face> testDataDigits = fr.readFaceData(imgDataFilename, labelFilename);
 		
 		DataOrganizer trainingData = new DataOrganizer(trainingDataDigits);
 		DataOrganizer testData = new DataOrganizer(testDataDigits);
 		
 		AccuracyStats stats = new AccuracyStats();
 		for(int digClass = 0; digClass < 10; digClass++){
-			for(int i = 0; i < testData.getGroupedDigits().get(digClass).size(); i++){
-				Digit digit = testData.getGroupedDigits().get(digClass).get(i);
+			for(int i = 0; i < testData.getGroupedFaces().get(digClass).size(); i++){
+				Face digit = testData.getGroupedFaces().get(digClass).get(i);
 				ArrayList<Double> postProbs = trainingData.getPosteriorProbabilities(digit);
 				stats.addDatapoint(digClass, postProbs.indexOf(Collections.max(postProbs)));
 			}

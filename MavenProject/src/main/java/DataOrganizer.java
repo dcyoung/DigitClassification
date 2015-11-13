@@ -7,33 +7,33 @@ import java.util.Map;
 
 public class DataOrganizer {
 	
-	private ArrayList<Digit> allDigits;
-	private ArrayList<ArrayList<Digit>> groupedDigits;
+	private ArrayList<Face> allFaces;
+	private ArrayList<ArrayList<Face>> groupedFaces;
 	
 	//likelihoods that each pixel for each digit has a value of 1
 	private ArrayList<double[][]> likelihoods;
 	
 	
-	public DataOrganizer(ArrayList<Digit> allDigits){
-		this.allDigits = allDigits;
+	public DataOrganizer(ArrayList<Face> allDigits){
+		this.allFaces = allDigits;
 		
-		this.groupedDigits = new ArrayList<ArrayList<Digit>>(); 
-		for(int i = 0; i < 10; i++ ){
-			this.groupedDigits.add(new ArrayList<Digit>());
+		this.groupedFaces = new ArrayList<ArrayList<Face>>(); 
+		for(int i = 0; i < 2; i++ ){
+			this.groupedFaces.add(new ArrayList<Face>());
 		}
 		groupDigits();
 		
 		this.likelihoods = new ArrayList<double[][]>();
-		for(int i = 0; i < 10; i++ ){
-			this.likelihoods.add(new double[28][28]);
+		for(int i = 0; i < 2; i++ ){
+			this.likelihoods.add(new double[70][60]);
 		}
 		calculateLikelihoods();
 	}
 	
 	public void groupDigits(){
-		int numDigits = this.allDigits.size();
+		int numDigits = this.allFaces.size();
 		for(int i = 0; i < numDigits; i++ ){
-			groupedDigits.get(this.allDigits.get(i).getTrueValue()).add(this.allDigits.get(i));
+			groupedFaces.get(this.allFaces.get(i).getIsFace()).add(this.allFaces.get(i));
 		}
 	}
 	
@@ -51,11 +51,11 @@ public class DataOrganizer {
 		for(int d = 0; d < likelihoods.size(); d++ ){
 			
 			//for every pixel i,j
-			for(int i = 0; i < 28; i++ ){
-				for(int j = 0; j < 28; j++ ){
+			for(int i = 0; i < 70; i++ ){
+				for(int j = 0; j < 60; j++ ){
 					//for each test img
 					sum = 0;
-					for(Digit tempDig : this.getGroupedDigits().get(d)){
+					for(Face tempDig : this.getGroupedFaces().get(d)){
 						sum += tempDig.getPixelData()[i][j];
 					}
 					//P(Fij = f | class) = (# of times pixel (i,j) has value f in training examples from this class) / (Total # of training examples from this class).
@@ -68,7 +68,7 @@ public class DataOrganizer {
 					 * denominator (where V is the number of possible values the feature can take on). 
 					 * The higher the value of k, the stronger the smoothing 
 					 */
-					likelihood = (float) ((k+sum)/(k*V+this.getGroupedDigits().get(d).size()));
+					likelihood = (float) ((k+sum)/(k*V+this.getGroupedFaces().get(d).size()));
 					likelihoods.get(d)[i][j] = likelihood;
 				}
 			}
@@ -84,8 +84,8 @@ public class DataOrganizer {
 		DecimalFormat df = new DecimalFormat("0.00");
 		df.setMaximumFractionDigits(2);
 		
-		for(int row = 0; row < 28; row++ ){
-			for(int col = 0; col < 28; col++ ){
+		for(int row = 0; row < 70; row++ ){
+			for(int col = 0; col < 60; col++ ){
 				System.out.print(df.format(pixelData[row][col]));
 				if(bUseSpaces)
 					System.out.print(" ");
@@ -94,12 +94,12 @@ public class DataOrganizer {
 		}
 	}
 	
-	public ArrayList<Digit> getAllDigits() {
-		return allDigits;
+	public ArrayList<Face> getAllFaces() {
+		return allFaces;
 	}
 
-	public ArrayList<ArrayList<Digit>> getGroupedDigits() {
-		return groupedDigits;
+	public ArrayList<ArrayList<Face>> getGroupedFaces() {
+		return groupedFaces;
 	}
 
 	public ArrayList<double[][]> getLikelihoods() {
@@ -111,8 +111,8 @@ public class DataOrganizer {
 	 * @param digit: the class of digit (0-9)
 	 * @return P(class) estimated by the empirical freq of different classes in the training set
 	 */
-	public float getProbabilityOfDigitClass(int digit){
-		return (float) (1.0*this.groupedDigits.get(digit).size()/this.allDigits.size());
+	public float getProbabilityOfFaceClass(int digit){
+		return (float) (1.0*this.groupedFaces.get(digit).size()/this.allFaces.size());
 	}
 	
 	/**
@@ -135,21 +135,21 @@ public class DataOrganizer {
 	
 	/**
 	 * 
-	 * @param digit
+	 * @param face
 	 * @return an array of posterior probabilities (up to scale) of each class given the digit
 	 */
-	public ArrayList<Double> getPosteriorProbabilities(Digit digit){
+	public ArrayList<Double> getPosteriorProbabilities(Face face){
 		ArrayList<Double> postProbs = new ArrayList<Double>();
-		int[][] testImg = digit.getPixelData();
+		int[][] testImg = face.getPixelData();
 		double tempProb;
 		double PijGivenClass;
 		
 		//for each digClass 0->9
-		for(int digClass = 0; digClass < 10; digClass++){
-			tempProb = Math.log(getProbabilityOfDigitClass(digClass));
+		for(int digClass = 0; digClass < 2; digClass++){
+			tempProb = Math.log(getProbabilityOfFaceClass(digClass));
 			//for each pixel in the testimg
-			for(int i = 0; i < 28; i++ ){
-				for(int j = 0; j < 28; j++ ){
+			for(int i = 0; i < 70; i++ ){
+				for(int j = 0; j < 60; j++ ){
 					PijGivenClass = Math.log(getPixelLikelihood(digClass, i, j, testImg[i][j]));
 					tempProb += PijGivenClass;
 				}
@@ -164,30 +164,32 @@ public class DataOrganizer {
 	public static void main(String[] args) {
 		
 		FileReader fr = new FileReader();
-		String imgDataFilename = "digitdata/trainingimages";
-		String labelFilename = "digitdata/traininglabels";
-		ArrayList<Digit> test = fr.readDigitData(imgDataFilename, labelFilename);
+		String imgDataFilename = "facedata/facedatatrain";
+		String labelFilename = "facedata/facedatatrainlabels";
+		ArrayList<Face> test = fr.readFaceData(imgDataFilename, labelFilename);
 		//test.get(0).printDigit(false);
 		
 		DataOrganizer dOrg = new DataOrganizer(test);
 		
-		for(int i = 0; i < 10; i++){
-			System.out.println("number of " + i + "'s: " + dOrg.getGroupedDigits().get(i).size());
-			System.out.println("P(Class = " + i + ") is " + dOrg.getProbabilityOfDigitClass(i));
+		for(int i = 0; i < 2; i++){
+			System.out.println("number of " + i + "'s: " + dOrg.getGroupedFaces().get(i).size());
+			System.out.println("P(Class = " + i + ") is " + dOrg.getProbabilityOfFaceClass(i));
 			//dOrg.printArray(dOrg.getLikelihoods().get(i), true);
 		}
 
 		AccuracyStats stats = new AccuracyStats();
-		for(int digClass = 0; digClass < 10; digClass++){
+		for(int faceClass = 0; faceClass < 2; faceClass++){
 			ArrayList<Integer> bestGuesses = new ArrayList<Integer>();
-			for(int i = 0; i < dOrg.getGroupedDigits().get(digClass).size(); i++){
-				Digit digit = dOrg.getGroupedDigits().get(digClass).get(i);
+			for(int i = 0; i < dOrg.getGroupedFaces().get(faceClass).size(); i++){
+				Face digit = dOrg.getGroupedFaces().get(faceClass).get(i);
 				ArrayList<Double> postProbs = dOrg.getPosteriorProbabilities(digit);
-				stats.addDatapoint(digClass, postProbs.indexOf(Collections.max(postProbs)));
+				stats.addDatapoint(faceClass, postProbs.indexOf(Collections.max(postProbs)));
 			}
 		}
 		
-		System.out.println(stats.getClassificationRates());
+		double[] classificationRates = stats.getClassificationRates();
+		System.out.println("Classification success rate for not faces: " + classificationRates[0]);
+		System.out.println("Classification success rate for faces: " + classificationRates[1]);
 		stats.printConfusionMatrix();
 	}
 

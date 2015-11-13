@@ -1,9 +1,9 @@
 import java.util.*;
 
-public class Digit {
+public class Face {
 
 	//actual true integer value of the digit between 0 and 9
-	private int trueValue;
+	private int isFace;
 	//28x28 array of values for the pixels of this digit
 	private int[][] pixelData;  
 	
@@ -12,20 +12,20 @@ public class Digit {
 	 * @param pixelData
 	 * @param trueValue
 	 */
-	public Digit(int[][] pixelData, int trueValue){
+	public Face(int[][] pixelData, int trueValue){
 		this.pixelData = deepCopy2dArray(pixelData); 
-		this.trueValue = trueValue;
+		this.isFace = trueValue;
 	}
 	
 	/**
 	 * Prints the digit value and pixel values
 	 * @param bUseSpaces
 	 */
-	public void printDigit(boolean bUseSpaces){
-		System.out.println("TrueValue: " + this.trueValue);
+	public void printFace(boolean bUseSpaces){
+		System.out.println("TrueValue: " + this.isFace);
 		System.out.println("PixelValues: ");
-		for(int row = 0; row < 28; row++ ){
-			for(int col = 0; col < 28; col++ ){
+		for(int row = 0; row < 70; row++ ){
+			for(int col = 0; col < 60; col++ ){
 				System.out.print(this.pixelData[row][col]);
 				if(bUseSpaces)
 					System.out.print(" ");
@@ -51,8 +51,8 @@ public class Digit {
 		return copy;
 	}
 	
-	public int getTrueValue() {
-		return trueValue;
+	public int getIsFace() {
+		return isFace;
 	}
 
 
