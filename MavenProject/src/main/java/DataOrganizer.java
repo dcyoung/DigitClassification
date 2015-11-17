@@ -167,6 +167,21 @@ public class DataOrganizer {
 		String imgDataFilename = "facedata/facedatatrain";
 		String labelFilename = "facedata/facedatatrainlabels";
 		ArrayList<Face> test = fr.readFaceData(imgDataFilename, labelFilename);
+		
+		int faceCount = 0;
+		int notFaceCount = 0;
+		System.out.println("Number of images in training data: " + test.size());
+		for(Face f : test){
+			if(f.getIsFace()==1){
+				faceCount++;
+			}
+			else{
+				notFaceCount++;
+			}
+		}
+		System.out.println("Number of actual faces:" + faceCount);
+		System.out.println("Number of not faces:" + notFaceCount);
+		
 		//test.get(0).printDigit(false);
 		
 		DataOrganizer dOrg = new DataOrganizer(test);
