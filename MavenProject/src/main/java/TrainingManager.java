@@ -3,22 +3,28 @@ import java.util.ArrayList;
 public class TrainingManager {
 
 	
-	private DataOrganizer dataset;
-	private MultiClassPerceptron perceptron;
+	private OrganizedDataSet trainingData;
 	
-	public TrainingManager(MultiClassPerceptron perceptron, DataOrganizer dataset){
-		this.perceptron = perceptron;
-		this.dataset = dataset;
+	/**
+	 * Constructor
+	 * @param dataset
+	 */
+	public TrainingManager(OrganizedDataSet dataset){
+		this.trainingData = dataset;
 	}
 	
+	
+	public void trainAllDataRandomly(MultiClassPerceptron perceptron){
+		trainPerceptron(perceptron, this.trainingData.getAllDigits());
+	}
 	
 	/**
 	 * 
 	 * @param perceptron
 	 */
 	public void trainAllClassesSequentially(MultiClassPerceptron perceptron){
-		for(int digClass = 0; digClass < this.dataset.getGroupedDigits().size(); digClass++){
-			trainPerceptron(perceptron, this.dataset.getGroupedDigits().get(digClass));
+		for(int digClass = 0; digClass < this.trainingData.getGroupedDigits().size(); digClass++){
+			trainPerceptron(perceptron, this.trainingData.getGroupedDigits().get(digClass));
 		}
 	}
 	
@@ -41,10 +47,23 @@ public class TrainingManager {
 	}
 	
 	
+	public AccuracyStats testTrainedPerceptron(MultiClassPerceptron perceptron, OrganizedDataSet testData){
+		AccuracyStats stats = new AccuracyStats();
+		
+		for(int digClass = 0; digClass < testData.getGroupedDigits().size(); digClass++){
+			for(int i = 0; i < testData.getGroupedDigits().get(digClass).size(); i++){
+				Digit digit = testData.getGroupedDigits().get(digClass).get(i);
+				
+				int digClassGuess = perceptron.feedForward(digit.generateInputsWithBias());
+				stats.addDatapoint(digClass, digClassGuess);
+			}
+		}
+		return stats;
+	}
+	
 	
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
+		
 	}
 
 }

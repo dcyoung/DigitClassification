@@ -51,6 +51,30 @@ public class Digit {
 		return copy;
 	}
 	
+	
+	public double[] generateInputsWithBias(){
+		int[][] features = this.pixelData;
+		double[] inputs;
+		
+		//populate the inputs array given the features
+		int numFeatureRows = features.length;
+		int numFeatureCols = features[0].length;
+		
+		//number of inputs will be 1 for each feature + 1 for the bias
+		int numInputs = numFeatureRows*numFeatureCols +1;
+		
+		inputs = new double[numInputs];
+		for(int row = 0; row < numFeatureRows; row++ ){
+			for(int col = 0; col < numFeatureCols; col++ ){
+				inputs[row*numFeatureCols + col] = (double) features[row][col];
+			}
+		}
+		inputs[numInputs-1] = 1;
+		return inputs;
+	}
+	
+	
+	
 	public int getTrueValue() {
 		return trueValue;
 	}
@@ -63,7 +87,18 @@ public class Digit {
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
+		FileReader fr = new FileReader();
+		String imgDataFilename = "digitdata/trainingimages";
+		String labelFilename = "digitdata/traininglabels";
+		ArrayList<Digit> allTrainingDigits = fr.readDigitData(imgDataFilename, labelFilename);
 		
+		Digit firstDigit = allTrainingDigits.get(0);
+		double[] inputs = firstDigit.generateInputsWithBias();
+		for(int i = 0; i < inputs.length; i++){
+			System.out.print(inputs[i] + ", ");
+		}
+		System.out.println();
+		System.out.println(firstDigit.generateInputsWithBias().length);
 	}
 
 }

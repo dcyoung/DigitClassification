@@ -75,7 +75,4 @@ public class AccuracyStats {
         }
     }
 
-    public void printClassificationRate() {
-
-    }
 }

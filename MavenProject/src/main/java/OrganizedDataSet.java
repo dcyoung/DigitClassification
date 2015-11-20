@@ -11,7 +11,7 @@ import java.util.Map;
  * @author dcyoung
  *
  */
-public class DataOrganizer {
+public class OrganizedDataSet {
 	
 	private ArrayList<Digit> allDigits;
 	private ArrayList<ArrayList<Digit>> groupedDigits;
@@ -20,7 +20,7 @@ public class DataOrganizer {
 	 * Constructor
 	 * @param allDigits
 	 */
-	public DataOrganizer(ArrayList<Digit> allDigits){
+	public OrganizedDataSet(ArrayList<Digit> allDigits){
 		this.allDigits = allDigits;
 		
 		this.groupedDigits = new ArrayList<ArrayList<Digit>>(); 
@@ -74,7 +74,7 @@ public class DataOrganizer {
 		ArrayList<Digit> test = fr.readDigitData(imgDataFilename, labelFilename);
 		//test.get(0).printDigit(false);
 		
-		DataOrganizer dOrg = new DataOrganizer(test);
+		OrganizedDataSet dOrg = new OrganizedDataSet(test);
 		
 		for(int i = 0; i < 10; i++){
 			System.out.println("number of " + i + "'s: " + dOrg.getGroupedDigits().get(i).size());

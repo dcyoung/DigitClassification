@@ -13,27 +13,29 @@ public class TestRunner {
 		FileReader fr = new FileReader();
 		String imgDataFilename = "digitdata/trainingimages";
 		String labelFilename = "digitdata/traininglabels";
-		ArrayList<Digit> trainingDataDigits = fr.readDigitData(imgDataFilename, labelFilename);
+		ArrayList<Digit> allTrainingDigits = fr.readDigitData(imgDataFilename, labelFilename);
 		
 		imgDataFilename = "digitdata/testimages";
 		labelFilename = "digitdata/testlabels";
-		ArrayList<Digit> testDataDigits = fr.readDigitData(imgDataFilename, labelFilename);
+		ArrayList<Digit> allTestingDigits = fr.readDigitData(imgDataFilename, labelFilename);
 		
-		DataOrganizer trainingData = new DataOrganizer(trainingDataDigits);
-		DataOrganizer testData = new DataOrganizer(testDataDigits);
+		OrganizedDataSet trainingDataset = new OrganizedDataSet(allTrainingDigits);
+		OrganizedDataSet testingDataset = new OrganizedDataSet(allTestingDigits);
 		
-//		AccuracyStats stats = new AccuracyStats();
-//		for(int digClass = 0; digClass < 10; digClass++){
-//			for(int i = 0; i < testData.getGroupedDigits().get(digClass).size(); i++){
-//				Digit digit = testData.getGroupedDigits().get(digClass).get(i);
-//				ArrayList<Double> postProbs = trainingData.getPosteriorProbabilities(digit);
-//				stats.addDatapoint(digClass, postProbs.indexOf(Collections.max(postProbs)));
-//			}
-//		}
-//		
-//		System.out.println("Confusion Matrix:");
-//		stats.printConfusionMatrix();
-//		
+		
+		MultiClassPerceptron perceptron = new MultiClassPerceptron(10, (28*28+1), true, 1);
+		TrainingManager trainingManager = new TrainingManager(trainingDataset);
+		//trainingManager.trainAllClassesSequentially(perceptron);
+		trainingManager.trainAllDataRandomly(perceptron);
+		
+		AccuracyStats stats = trainingManager.testTrainedPerceptron(perceptron, testingDataset);
+		System.out.println("Average Classification Rate:");
+		System.out.println(stats.getAverageClassificationRate());
+		System.out.println();
+		System.out.println("Confusion Matrix:");
+		stats.printConfusionMatrix();
+        
+        
 //		System.out.println();
 //		System.out.println("Classification Rates by digit:");
 //		double[] classRates = stats.getClassificationRates();

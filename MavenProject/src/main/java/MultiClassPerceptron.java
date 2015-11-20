@@ -23,8 +23,10 @@ public class MultiClassPerceptron {
 	public MultiClassPerceptron(int numClasses, int numInputs, boolean bInitRandWeights, int epoch){
 		
 		//create weight vectors for each class (initialize all weights to 0)
+		this.weights = new ArrayList<double[]>();
 		for(int i = 0; i < numClasses; i++){
-			this.weights.add(new double[numInputs]);
+			double[] weightVec = new double[numInputs];
+			this.weights.add(weightVec);
 		}
 		
 		if(bInitRandWeights){
@@ -83,7 +85,7 @@ public class MultiClassPerceptron {
 	
 
 	public static void main(String[] args) {
-	
+		ArrayList<double[]> weights;
 	}
 
 }
