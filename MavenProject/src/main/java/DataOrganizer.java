@@ -5,6 +5,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Organizes the training data and calculates probability info necessary
+ * for flag detection
+ * @author dcyoung
+ *
+ */
 public class DataOrganizer {
 	
 	private ArrayList<Digit> allDigits;
@@ -13,7 +19,10 @@ public class DataOrganizer {
 	//likelihoods that each pixel for each digit has a value of 1
 	private ArrayList<double[][]> likelihoods;
 	
-	
+	/**
+	 * Constructor
+	 * @param allDigits
+	 */
 	public DataOrganizer(ArrayList<Digit> allDigits){
 		this.allDigits = allDigits;
 		
