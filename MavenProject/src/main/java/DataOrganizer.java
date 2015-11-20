@@ -39,36 +39,6 @@ public class DataOrganizer {
 	}
 	
 	/**
-	 * 
-	 * @param perceptron
-	 */
-	public void trainDigitsSequentially(MultiClassPerceptron perceptron){
-		for(int digClass = 0; digClass < this.groupedDigits.size(); digClass++){
-			trainPerceptron(perceptron, this.groupedDigits.get(digClass));
-		}
-	}
-	
-	/**
-	 * 
-	 * @param perceptron
-	 * @param trainingData
-	 */
-	public void trainPerceptron(MultiClassPerceptron perceptron, ArrayList<Digit> trainingData){
-		PerceptronTrainer[] trainer = new PerceptronTrainer[trainingData.size()];
-		for(int i = 0; i < trainer.length; i++){
-			Digit trainingDigit = trainingData.get(i);
-			int actualDigClass = trainingDigit.getTrueValue();
-			trainer[i] = new PerceptronTrainer(trainingDigit.getPixelData(), actualDigClass);
-		}
-		
-		for(int i = 0; i < trainer.length; i++){
-			perceptron.train(trainer[i].getInputs(), trainer[i].getTrueValue());
-		}
-	}
-	
-	
-	
-	/**
 	 * Print the values of a 28x28 pixel array 
 	 * @param pixelData
 	 * @param bUseSpaces
