@@ -1,4 +1,15 @@
-
+/**
+ * PerceptronTrainer:
+ *	An individual trainer that can be used to conduct a single data 
+ *  training on a perceptron. A TrainingManager is used to create 
+ *  and manage many PerceptronTrainers.
+ *  
+ *  (for this project, this could be replaced functinally by just using
+ *  a Digit class, but this class was created to dedicate the functionality
+ *  of a sinlge train on a perceptron to a class)
+ * @author dcyoung
+ *
+ */
 public class PerceptronTrainer {
 	
 	

@@ -2,6 +2,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
 
+/**
+ * MultiClassPerceptron: 
+ * A peceptron that can operate on inputs to produce a classification 
+ * estimate considering multiple classes. 
+ * @author dcyoung
+ *
+ */
 public class MultiClassPerceptron {
 
 	//weight vector for each class
@@ -42,7 +49,11 @@ public class MultiClassPerceptron {
 		this.alpha = 1000.0/(1000+epoch);
 	}
 	
-	
+	/**
+	 * feeds the input through the perceptron 
+	 * @param inputs: any features representable by a double array (digit pixel values for example)
+	 * @return the perceptron's best guess at a classification (digit class)
+	 */
 	public int feedForward(double[] inputs){
 		
 		//create a container to store the calculated sum for each class
@@ -72,20 +83,31 @@ public class MultiClassPerceptron {
 		}
 	}
 	
-	void train(double[] inputs, int desiredClass){
+	/**
+	 * Trains the perceptron by running the input through the perceptron, comparing
+	 * the perceptron's best classification to the true value and updating the weights 
+	 * if the classification was innacurate.
+	 * @param inputs: any features representable by a double array (digit pixel values for example)
+	 * @param expectedClass: the correct classification
+	 */
+	void train(double[] inputs, int expectedClass){
+		//let the perceptron classify the given inputs
 		int bestClassGuess = feedForward(inputs);
-		if(bestClassGuess == desiredClass){
+		//compare the classification to the expected value
+		if(bestClassGuess == expectedClass){
 			//do nothing
 		}
 		else{
-			updateWeightVec(desiredClass, inputs, this.alpha);
+			//if the classification was incorrect
+			//update the weight vectors of the expected and incorrectly chosen classes
+			updateWeightVec(expectedClass, inputs, this.alpha);
 			updateWeightVec(bestClassGuess, inputs, -this.alpha);
 		}
 	}
 	
 
 	public static void main(String[] args) {
-		ArrayList<double[]> weights;
+		
 	}
 
 }

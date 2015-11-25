@@ -1,8 +1,15 @@
 import java.util.ArrayList;
-
+/**
+ * TrainingManager: 
+ * 	Creates and manages many PerceptronTrainers to effectively train a 
+ * 	perceptron on a training dataset. Also provides methods for testing 
+ * 	the performance of a trained peceptron. 
+ * @author dcyoung
+ *
+ */
 public class TrainingManager {
 
-	
+	//the organized training data
 	private OrganizedDataSet trainingData;
 	
 	/**
@@ -13,13 +20,18 @@ public class TrainingManager {
 		this.trainingData = dataset;
 	}
 	
-	
+	/**
+	 * Trains a perceptron on all the data in the organized dataset, in the order the
+	 * data was originally read in... before any organization or separation into groups.
+	 * @param perceptron
+	 */
 	public void trainAllDataRandomly(MultiClassPerceptron perceptron){
 		trainPerceptron(perceptron, this.trainingData.getAllDigits());
 	}
 	
 	/**
-	 * 
+	 * Trains a perceptron on all the data in the organized dataset by going through
+	 * each class sequentially and training the perceptron on every example from that class.
 	 * @param perceptron
 	 */
 	public void trainAllClassesSequentially(MultiClassPerceptron perceptron){
@@ -29,7 +41,7 @@ public class TrainingManager {
 	}
 	
 	/**
-	 * 
+	 * Train a perceptron on a specifiable list of training data.
 	 * @param perceptron
 	 * @param trainingData
 	 */
@@ -46,7 +58,12 @@ public class TrainingManager {
 		}
 	}
 	
-	
+	/**
+	 * Test a perceptron on a set of test data.
+	 * @param perceptron
+	 * @param testData
+	 * @return accuracy statistics about the classification performance of the perceptron on the testing data.
+	 */
 	public AccuracyStats testTrainedPerceptron(MultiClassPerceptron perceptron, OrganizedDataSet testData){
 		AccuracyStats stats = new AccuracyStats();
 		

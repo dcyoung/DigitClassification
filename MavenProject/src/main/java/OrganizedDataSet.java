@@ -6,10 +6,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Organizes the training data and calculates probability info necessary
- * for flag detection
+ * Organizes the training data into groups by class
  * @author dcyoung
- *
  */
 public class OrganizedDataSet {
 	
@@ -57,10 +55,18 @@ public class OrganizedDataSet {
 		}
 	}
 	
+	/**
+	 * 
+	 * @return all the digits from the data set as they were read in, unorganized
+	 */
 	public ArrayList<Digit> getAllDigits() {
 		return allDigits;
 	}
-
+	
+	/**
+	 * 
+	 * @return all the digits from the data set grouped by class
+	 */
 	public ArrayList<ArrayList<Digit>> getGroupedDigits() {
 		return groupedDigits;
 	}

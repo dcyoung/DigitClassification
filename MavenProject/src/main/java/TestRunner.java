@@ -3,7 +3,11 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-
+/**
+ * Provides a single entry point to execute the training and testing of a perceptron. 
+ * @author dcyoung
+ *
+ */
 public class TestRunner {
 	
 	public static void main(String[] args) {
@@ -22,13 +26,12 @@ public class TestRunner {
 		OrganizedDataSet trainingDataset = new OrganizedDataSet(allTrainingDigits);
 		OrganizedDataSet testingDataset = new OrganizedDataSet(allTestingDigits);
 		
+		TrainingManager trainingManager = new TrainingManager(trainingDataset);
 		
 		MultiClassPerceptron perceptron = new MultiClassPerceptron(10, (28*28+1), true, 1);
-		TrainingManager trainingManager = new TrainingManager(trainingDataset);
-		//trainingManager.trainAllClassesSequentially(perceptron);
 		trainingManager.trainAllDataRandomly(perceptron);
-		
 		AccuracyStats stats = trainingManager.testTrainedPerceptron(perceptron, testingDataset);
+		
 		System.out.println("Average Classification Rate:");
 		System.out.println(stats.getAverageClassificationRate());
 		System.out.println();
