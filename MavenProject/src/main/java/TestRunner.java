@@ -38,7 +38,7 @@ public class TestRunner {
 		System.out.println("Confusion Matrix:");
 		stats.printConfusionMatrix();
         
-        
+        //rodney added this coment
 //		System.out.println();
 //		System.out.println("Classification Rates by digit:");
 //		double[] classRates = stats.getClassificationRates();
