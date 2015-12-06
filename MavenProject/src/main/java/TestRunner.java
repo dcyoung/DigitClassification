@@ -27,26 +27,40 @@ public class TestRunner {
 		OrganizedDataSet testingDataset = new OrganizedDataSet(allTestingDigits);
 		
 		TrainingManager trainingManager = new TrainingManager(trainingDataset);
+		AccuracyStats stats;
 		
-		MultiClassPerceptron perceptron = new MultiClassPerceptron(10, (28*28+1), true, 1);
+		int numClasses = 10;
+		boolean bInitRandWeights = false;
+		boolean bUseBias = false;
+		int numInputs = (bUseBias) ? 28*28+1 : 28*28;
+		
+		MultiClassPerceptron perceptron = new MultiClassPerceptron(numClasses, numInputs, bInitRandWeights, bUseBias, 1);
 		trainingManager.trainAllDataRandomly(perceptron);
-		AccuracyStats stats = trainingManager.testTrainedPerceptron(perceptron, testingDataset);
+		/*
+		for(int i = 0; i < 200; i++){
+			perceptron.updateLearningRate(i);
+			trainingManager.trainAllDataRandomly(perceptron);
+			stats = trainingManager.testTrainedPerceptron(perceptron, testingDataset);
+			System.out.println(stats.getAverageClassificationRate());
+		}
+		*/
+
+		//trainingManager.trainAllClassesSequentially(perceptron);
+		stats = trainingManager.testTrainedPerceptron(perceptron, testingDataset);
 		
-		System.out.println("Average Classification Rate:");
-		System.out.println(stats.getAverageClassificationRate());
+		System.out.println("Average Classification Rate Across all Digit Classes: \n" + df.format(stats.getAverageClassificationRate()));
+		System.out.println();
+		System.out.println("Classification Rates by digit:");
+		double[] classRates = stats.getClassificationRates();
+		for(int i = 0; i < 10; i++){
+			System.out.println("Digit " + i + ": " + df.format(classRates[i]));
+		}
 		System.out.println();
 		System.out.println("Confusion Matrix:");
 		stats.printConfusionMatrix();
         
-        //rodney added this coment
-//		System.out.println();
-//		System.out.println("Classification Rates by digit:");
-//		double[] classRates = stats.getClassificationRates();
-//		for(int i = 0; i < 10; i++){
-//			System.out.println("Digit " + i + ": " + df.format(classRates[i]));
-//		}
-//		System.out.println("Average Classification Rate Across all Digit Classes: \n" + df.format(stats.getAverageClassificationRate()));
-//
+
+
 //		try {
 //			HeatMapGenerator hmg = new HeatMapGenerator(stats, trainingData.getLikelihoods());
 //		} catch (IOException e) {

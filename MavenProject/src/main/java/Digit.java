@@ -52,7 +52,7 @@ public class Digit {
 	}
 	
 	
-	public double[] generateInputsWithBias(){
+	public double[] generatePerceptronInputs(boolean bUseBias){
 		int[][] features = this.pixelData;
 		double[] inputs;
 		
@@ -60,8 +60,12 @@ public class Digit {
 		int numFeatureRows = features.length;
 		int numFeatureCols = features[0].length;
 		
-		//number of inputs will be 1 for each feature + 1 for the bias
-		int numInputs = numFeatureRows*numFeatureCols +1;
+		//number of inputs will be 1 for each feature 
+		int numInputs = numFeatureRows*numFeatureCols;
+		//+ 1 for the bias
+		if(bUseBias){ 
+			numInputs++;
+		}
 		
 		inputs = new double[numInputs];
 		for(int row = 0; row < numFeatureRows; row++ ){
@@ -69,7 +73,9 @@ public class Digit {
 				inputs[row*numFeatureCols + col] = (double) features[row][col];
 			}
 		}
-		inputs[numInputs-1] = 1;
+		if(bUseBias){
+			inputs[numInputs-1] = 1;
+		}
 		return inputs;
 	}
 	
@@ -93,12 +99,12 @@ public class Digit {
 		ArrayList<Digit> allTrainingDigits = fr.readDigitData(imgDataFilename, labelFilename);
 		
 		Digit firstDigit = allTrainingDigits.get(0);
-		double[] inputs = firstDigit.generateInputsWithBias();
+		double[] inputs = firstDigit.generatePerceptronInputs(true);
 		for(int i = 0; i < inputs.length; i++){
 			System.out.print(inputs[i] + ", ");
 		}
 		System.out.println();
-		System.out.println(firstDigit.generateInputsWithBias().length);
+		System.out.println(firstDigit.generatePerceptronInputs(true).length);
 	}
 
 }

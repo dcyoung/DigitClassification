@@ -14,9 +14,12 @@ public class MultiClassPerceptron {
 	//weight vector for each class
 	private ArrayList<double[]> weights;
 	//learningRate
-	private double alpha; 
+	private double alpha;
+	//whether or not this perceptron will use a bias
+	private boolean bUseBias;
+	
 	private Random randomGenerator = new Random();
-
+	
 	
 	
 	/**
@@ -27,7 +30,7 @@ public class MultiClassPerceptron {
 	 * with random weights, false if the weights should be initialized to 0
 	 * @param learningEpoch
 	 */
-	public MultiClassPerceptron(int numClasses, int numInputs, boolean bInitRandWeights, int epoch){
+	public MultiClassPerceptron(int numClasses, int numInputs, boolean bInitRandWeights, boolean bUseBias, int epoch){
 		
 		//create weight vectors for each class (initialize all weights to 0)
 		this.weights = new ArrayList<double[]>();
@@ -44,7 +47,8 @@ public class MultiClassPerceptron {
 				}
 			}
 		}
-		
+		//whether or not the perceptron should use a bias input
+		this.bUseBias = bUseBias;
 		//calculate the learning rate (alpha)
 		this.alpha = 1000.0/(1000+epoch);
 	}
@@ -105,9 +109,17 @@ public class MultiClassPerceptron {
 		}
 	}
 	
+	void updateLearningRate(int epoch){
+		this.alpha = 1000.0/(1000+epoch);
+	}
+	
+	public boolean getUseBias() {
+		return this.bUseBias;
+	}
 
 	public static void main(String[] args) {
 		
 	}
+
 
 }

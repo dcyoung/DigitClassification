@@ -20,15 +20,19 @@ public class PerceptronTrainer {
 	 * Constructor:
 	 * @param features - 2D int array of features (pixel values)
 	 * @param trueValue - true value or answer for the features
+	 * @param bUseBias - whether or not this trainer should append a bias input of 1 to the inputs
 	 */
-	public PerceptronTrainer(int[][] features, int trueValue){
+	public PerceptronTrainer(int[][] features, int trueValue, boolean bUseBias){
 		
 		//populate the inputs array given the features
 		int numFeatureRows = features.length;
 		int numFeatureCols = features[0].length;
 		
 		//number of inputs will be 1 for each feature + 1 for the bias
-		int numInputs = numFeatureRows*numFeatureCols +1;
+		int numInputs = numFeatureRows*numFeatureCols;
+		if(bUseBias){
+			numInputs++;
+		}
 		
 		this.inputs = new double[numInputs];
 		for(int row = 0; row < numFeatureRows; row++ ){
@@ -36,8 +40,9 @@ public class PerceptronTrainer {
 				this.inputs[row*numFeatureCols + col] = features[row][col];
 			}
 		}
-		this.inputs[numInputs-1] = 1;
-		
+		if(bUseBias){
+			this.inputs[numInputs-1] = 1;
+		}
 		//note the trueValue which will be used during training
 		this.trueValue = trueValue;
 	}
@@ -64,7 +69,7 @@ public class PerceptronTrainer {
 
 	public static void main(String[] args) {
 		int[][] features = new int[28][28];
-		PerceptronTrainer pT = new PerceptronTrainer(features, 4);
+		PerceptronTrainer pT = new PerceptronTrainer(features, 4, true);
 		pT.printInputs();
 	}
 

@@ -50,7 +50,7 @@ public class TrainingManager {
 		for(int i = 0; i < trainer.length; i++){
 			Digit trainingDigit = trainingData.get(i);
 			int actualDigClass = trainingDigit.getTrueValue();
-			trainer[i] = new PerceptronTrainer(trainingDigit.getPixelData(), actualDigClass);
+			trainer[i] = new PerceptronTrainer(trainingDigit.getPixelData(), actualDigClass, perceptron.getUseBias());
 		}
 		
 		for(int i = 0; i < trainer.length; i++){
@@ -71,7 +71,7 @@ public class TrainingManager {
 			for(int i = 0; i < testData.getGroupedDigits().get(digClass).size(); i++){
 				Digit digit = testData.getGroupedDigits().get(digClass).get(i);
 				
-				int digClassGuess = perceptron.feedForward(digit.generateInputsWithBias());
+				int digClassGuess = perceptron.feedForward(digit.generatePerceptronInputs(perceptron.getUseBias()));
 				stats.addDatapoint(digClass, digClassGuess);
 			}
 		}
