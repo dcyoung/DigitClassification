@@ -1,49 +1,26 @@
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+
 
 /**
- * Organizes the training data and calculates probability info necessary
- * for flag detection
+ * Trains a simple naive Bayes Classifier on a training Dataset
+ * by calculating probability info necessary for flag detection
  * @author dcyoung
- *
  */
-public class DataOrganizer {
-	
-	private ArrayList<Digit> allDigits;
-	private ArrayList<ArrayList<Digit>> groupedDigits;
+public class NaiveBayesClassifier {
+	private OrganizedDataset trainingData;
 	
 	//likelihoods that each pixel for each digit has a value of 1
 	private ArrayList<double[][]> likelihoods;
 	
-	/**
-	 * Constructor
-	 * @param allDigits
-	 */
-	public DataOrganizer(ArrayList<Digit> allDigits){
-		this.allDigits = allDigits;
-		
-		this.groupedDigits = new ArrayList<ArrayList<Digit>>(); 
-		for(int i = 0; i < 10; i++ ){
-			this.groupedDigits.add(new ArrayList<Digit>());
-		}
-		groupDigits();
-		
+	public NaiveBayesClassifier(OrganizedDataset trainingData){
+		this.trainingData = trainingData;
 		this.likelihoods = new ArrayList<double[][]>();
-		for(int i = 0; i < 10; i++ ){
+		int numClasses = trainingData.getGroupedDigits().size();
+		for(int i = 0; i < numClasses; i++ ){
 			this.likelihoods.add(new double[28][28]);
 		}
 		calculateLikelihoods();
-	}
-	
-	public void groupDigits(){
-		int numDigits = this.allDigits.size();
-		for(int i = 0; i < numDigits; i++ ){
-			groupedDigits.get(this.allDigits.get(i).getTrueValue()).add(this.allDigits.get(i));
-		}
 	}
 	
 	/**
@@ -56,20 +33,17 @@ public class DataOrganizer {
 		float k  = 1; //constant
 		int V = 2; //number of possible values a feature can take (here binary 0,1  so 2 values)
 		
-		//for digit 0->9
+		//for each class (digit 0->9)
 		for(int d = 0; d < likelihoods.size(); d++ ){
-			
 			//for every pixel i,j
 			for(int i = 0; i < 28; i++ ){
 				for(int j = 0; j < 28; j++ ){
-					//for each test img
 					sum = 0;
-					for(Digit tempDig : this.getGroupedDigits().get(d)){
+					//for each training example from this class
+					for(Digit tempDig : this.trainingData.getGroupedDigits().get(d)){
 						sum += tempDig.getPixelData()[i][j];
 					}
 					//P(Fij = f | class) = (# of times pixel (i,j) has value f in training examples from this class) / (Total # of training examples from this class).
-					//likelihood = (float) (1.0*sum/this.getSeparatedDigits().get(d).size());
-					
 					/*
 					 * smooth the likelihoods to ensure that there are no zero counts 
 					 * Laplace smoothing is a very simple method that increases the observation count of every value f 
@@ -77,51 +51,24 @@ public class DataOrganizer {
 					 * denominator (where V is the number of possible values the feature can take on). 
 					 * The higher the value of k, the stronger the smoothing 
 					 */
-					likelihood = (float) ((k+sum)/(k*V+this.getGroupedDigits().get(d).size()));
+					int totalNumExamplesInClass = this.trainingData.getGroupedDigits().get(d).size();
+					likelihood = (float) ((k+sum)/(k*V+totalNumExamplesInClass));
 					likelihoods.get(d)[i][j] = likelihood;
 				}
 			}
 		}
 	}
 	
-	/**
-	 * Print the values of a 28x28 pixel array 
-	 * @param pixelData
-	 * @param bUseSpaces
-	 */
-	public void printArray(float[][] pixelData, boolean bUseSpaces){
-		DecimalFormat df = new DecimalFormat("0.00");
-		df.setMaximumFractionDigits(2);
-		
-		for(int row = 0; row < 28; row++ ){
-			for(int col = 0; col < 28; col++ ){
-				System.out.print(df.format(pixelData[row][col]));
-				if(bUseSpaces)
-					System.out.print(" ");
-			}
-			System.out.println();
-		}
-	}
-	
-	public ArrayList<Digit> getAllDigits() {
-		return allDigits;
-	}
-
-	public ArrayList<ArrayList<Digit>> getGroupedDigits() {
-		return groupedDigits;
-	}
-
-	public ArrayList<double[][]> getLikelihoods() {
-		return likelihoods;
-	}
 	
 	/**
 	 * estimate the priors P(class) by the empirical frequencies of different classes in the training set
-	 * @param digit: the class of digit (0-9)
+	 * @param digClass: the class of digit (0-9)
 	 * @return P(class) estimated by the empirical freq of different classes in the training set
 	 */
-	public float getProbabilityOfDigitClass(int digit){
-		return (float) (1.0*this.groupedDigits.get(digit).size()/this.allDigits.size());
+	public float getProbabilityOfDigitClass(int digClass){
+		int numExamplesFromDesiredClass = this.trainingData.getGroupedDigits().get(digClass).size();
+		int numExamplesFromAllClasses = this.trainingData.getAllDigits().size();
+		return (float) (1.0*numExamplesFromDesiredClass/numExamplesFromAllClasses);
 	}
 	
 	/**
@@ -144,12 +91,13 @@ public class DataOrganizer {
 	
 	/**
 	 * 
-	 * @param digit
-	 * @return an array of posterior probabilities (up to scale) of each class given the digit
+	 * @param digitExample
+	 * @return an array of posterior probabilities (or proportional representations) 
+	 * of each digit class given the example digit... ie: an array of entries P(Class_i | Example)
 	 */
-	public ArrayList<Double> getPosteriorProbabilities(Digit digit){
+	public ArrayList<Double> getPosteriorProbabilities(Digit digitExample){
 		ArrayList<Double> postProbs = new ArrayList<Double>();
-		int[][] testImg = digit.getPixelData();
+		int[][] testImg = digitExample.getPixelData();
 		double tempProb;
 		double PijGivenClass;
 		
@@ -170,28 +118,34 @@ public class DataOrganizer {
 	}
 	
 	
+	
+	public ArrayList<double[][]> getLikelihoods() {
+		return likelihoods;
+	}
+	
 	public static void main(String[] args) {
-		
+		// TODO Auto-generated method stub
 		FileReader fr = new FileReader();
 		String imgDataFilename = "digitdata/trainingimages";
 		String labelFilename = "digitdata/traininglabels";
 		ArrayList<Digit> test = fr.readDigitData(imgDataFilename, labelFilename);
 		//test.get(0).printDigit(false);
 		
-		DataOrganizer dOrg = new DataOrganizer(test);
+		OrganizedDataset trainingData = new OrganizedDataset(test);
+		NaiveBayesClassifier classifier = new NaiveBayesClassifier(trainingData);
 		
 		for(int i = 0; i < 10; i++){
-			System.out.println("number of " + i + "'s: " + dOrg.getGroupedDigits().get(i).size());
-			System.out.println("P(Class = " + i + ") is " + dOrg.getProbabilityOfDigitClass(i));
+			System.out.println("number of " + i + "'s: " + trainingData.getGroupedDigits().get(i).size());
+			System.out.println("P(Class = " + i + ") is " + classifier.getProbabilityOfDigitClass(i));
 			//dOrg.printArray(dOrg.getLikelihoods().get(i), true);
 		}
 
 		AccuracyStats stats = new AccuracyStats();
 		for(int digClass = 0; digClass < 10; digClass++){
 			ArrayList<Integer> bestGuesses = new ArrayList<Integer>();
-			for(int i = 0; i < dOrg.getGroupedDigits().get(digClass).size(); i++){
-				Digit digit = dOrg.getGroupedDigits().get(digClass).get(i);
-				ArrayList<Double> postProbs = dOrg.getPosteriorProbabilities(digit);
+			for(int i = 0; i < trainingData.getGroupedDigits().get(digClass).size(); i++){
+				Digit digit = trainingData.getGroupedDigits().get(digClass).get(i);
+				ArrayList<Double> postProbs = classifier.getPosteriorProbabilities(digit);
 				stats.addDatapoint(digClass, postProbs.indexOf(Collections.max(postProbs)));
 			}
 		}

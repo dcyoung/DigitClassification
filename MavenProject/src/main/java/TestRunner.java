@@ -19,14 +19,15 @@ public class TestRunner {
 		labelFilename = "digitdata/testlabels";
 		ArrayList<Digit> testDataDigits = fr.readDigitData(imgDataFilename, labelFilename);
 		
-		DataOrganizer trainingData = new DataOrganizer(trainingDataDigits);
-		DataOrganizer testData = new DataOrganizer(testDataDigits);
+		OrganizedDataset trainingData = new OrganizedDataset(trainingDataDigits);
+		NaiveBayesClassifier classifier = new NaiveBayesClassifier(trainingData);
+		OrganizedDataset testData = new OrganizedDataset(testDataDigits);
 		
 		AccuracyStats stats = new AccuracyStats();
 		for(int digClass = 0; digClass < 10; digClass++){
 			for(int i = 0; i < testData.getGroupedDigits().get(digClass).size(); i++){
 				Digit digit = testData.getGroupedDigits().get(digClass).get(i);
-				ArrayList<Double> postProbs = trainingData.getPosteriorProbabilities(digit);
+				ArrayList<Double> postProbs = classifier.getPosteriorProbabilities(digit);
 				stats.addDatapoint(digClass, postProbs.indexOf(Collections.max(postProbs)));
 			}
 		}
@@ -43,7 +44,7 @@ public class TestRunner {
 		System.out.println("Average Classification Rate Across all Digit Classes: \n" + df.format(stats.getAverageClassificationRate()));
 
 		try {
-			HeatMapGenerator hmg = new HeatMapGenerator(stats, trainingData.getLikelihoods());
+			HeatMapGenerator hmg = new HeatMapGenerator(stats, classifier.getLikelihoods());
 		} catch (IOException e) {
 			System.out.println("Failed to create/save heat maps");
 			e.printStackTrace();
